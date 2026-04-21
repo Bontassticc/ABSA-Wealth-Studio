@@ -19,7 +19,7 @@ useEffect(() => {
 
 
 
-  // 🧠 simple financial health logic
+  // 🧠 A simple financial health logic
   const savingsRate = (savings / income) * 100;
 
   const getStatus = () => {
