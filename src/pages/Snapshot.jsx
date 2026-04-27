@@ -1,24 +1,20 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import Navbar from "../components/Navbar";
 import { UserContext } from "../context/UserContext";
+
+const fmt = (n) =>
+  "R" + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
 export default function Snapshot() {
   const { score, getScoreLabel } = useContext(UserContext);
   const {
-    income,
-    setIncome,
-    expenses,
-    setExpenses,
-    savings,
-    setSavings,
+    income, setIncome,
+    expenses, setExpenses,
+    savings, setSavings,
     available,
   } = useContext(UserContext);
 
-  // 🌙 DARK MODE
-  useEffect(() => {
-    document.body.classList.add("dark");
-    return () => document.body.classList.remove("dark");
-  }, []);
+  const isLow = available < 10000;
 
   return (
     <div>
@@ -26,138 +22,137 @@ export default function Snapshot() {
 
       <div className="page">
 
-        {/* HEADER */}
         <div className="section">
-          <h1>Financial Snapshot</h1>
-          <p className="muted">
-            Adjust your financial inputs and see real-time impact
-          </p>
+          <p className="label">Snapshot</p>
+          <h1>Financial profile</h1>
+          <p className="muted">Three numbers that shape every decision.</p>
         </div>
 
-        {/* MAIN GRID */}
         <div className="snapshot-grid">
 
-          {/* LEFT: INPUT PANEL */}
-          <div className="card">
-            <div className="label">Monthly Inputs</div>
-
-            <div className="input-group">
-              <label>Income</label>
-              <input
-                className="input"
-                type="number"
-                value={income}
-                onChange={(e) => setIncome(Number(e.target.value))}
-              />
-            </div>
-
-            <div className="input-group">
-              <label>Expenses</label>
-              <input
-                className="input"
-                type="number"
-                value={expenses}
-                onChange={(e) => setExpenses(Number(e.target.value))}
-              />
-            </div>
-
-            <div className="input-group">
-              <label>Savings</label>
-              <input
-                className="input"
-                type="number"
-                value={savings}
-                onChange={(e) => setSavings(Number(e.target.value))}
-              />
-            </div>
-
-            <p className="muted" style={{ marginTop: "12px" }}>
-              Changes here dynamically affect your simulations, tracks, and financial score.
-            </p>
-          </div>
-
-          {/* RIGHT: LIVE SYSTEM */}
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
 
-            {/* 💰 AVAILABLE (HERO) */}
-            <div className="card card-feature">
-              <div className="label">Available Balance</div>
-              <div className="big-number">R{available}</div>
-              <p>After all commitments</p>
+            <div className="card">
+              <div className="input-group">
+                <label>
+                  <span className="dot dot-green" />
+                  Monthly income
+                </label>
+                <p className="muted" style={{ marginBottom: "8px", fontSize: "12px" }}>
+                  Take-home after PAYE
+                </p>
+                <div className="input-row">
+                  <input
+                    type="number"
+                    value={income}
+                    onChange={(e) => setIncome(Number(e.target.value))}
+                  />
+                  <span className="input-suffix">/ mo</span>
+                </div>
+              </div>
             </div>
 
-            {/* 🔵 SCORE WITH RING */}
-            <div className="card score-card">
-              <div className="label">Financial Health</div>
-
-              <div className="score-ring">
-                <svg width="120" height="120">
-                  <circle
-                    cx="60"
-                    cy="60"
-                    r="50"
-                    stroke="rgba(255,255,255,0.1)"
-                    strokeWidth="10"
-                    fill="none"
+            <div className="card">
+              <div className="input-group">
+                <label>
+                  <span className="dot dot-orange" />
+                  Monthly expenses
+                </label>
+                <p className="muted" style={{ marginBottom: "8px", fontSize: "12px" }}>
+                  Fixed + variable
+                </p>
+                <div className="input-row">
+                  <input
+                    type="number"
+                    value={expenses}
+                    onChange={(e) => setExpenses(Number(e.target.value))}
                   />
-                  <circle
-                    cx="60"
-                    cy="60"
-                    r="50"
-                    stroke="url(#gradient)"
-                    strokeWidth="10"
-                    fill="none"
-                    strokeDasharray={314}
-                    strokeDashoffset={314 - (score / 100) * 314}
-                    strokeLinecap="round"
-                  />
-                  <defs>
-                    <linearGradient id="gradient">
-                      <stop offset="0%" stopColor="#4A90E2" />
-                      <stop offset="100%" stopColor="#7B61FF" />
-                    </linearGradient>
-                  </defs>
-                </svg>
+                  <span className="input-suffix">/ mo</span>
+                </div>
+              </div>
+            </div>
 
-                <div className="score-text">{score}</div>
+            <div className="card">
+              <div className="input-group">
+                <label>
+                  <span className="dot dot-amber" />
+                  Monthly savings
+                </label>
+                <p className="muted" style={{ marginBottom: "8px", fontSize: "12px" }}>
+                  Automatic allocation
+                </p>
+                <div className="input-row">
+                  <input
+                    type="number"
+                    value={savings}
+                    onChange={(e) => setSavings(Number(e.target.value))}
+                  />
+                  <span className="input-suffix">/ mo</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+
+            <div className="card card-dark">
+              <div className="label" style={{ color: "rgba(255,255,255,0.45)" }}>
+                Live Summary
               </div>
 
-              <p
+              <div style={{ marginTop: "16px", display: "flex", flexDirection: "column", gap: "12px" }}>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
+                  <span style={{ color: "rgba(255,255,255,0.6)" }}>Income</span>
+                  <span style={{ color: "white", fontWeight: 500 }}>{fmt(income)}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
+                  <span style={{ color: "rgba(255,255,255,0.6)" }}>Expenses</span>
+                  <span style={{ color: "#E07A5F", fontWeight: 500 }}>-{fmt(expenses)}</span>
+                </div>
+                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "14px" }}>
+                  <span style={{ color: "rgba(255,255,255,0.6)" }}>Savings</span>
+                  <span style={{ color: "#E07A5F", fontWeight: 500 }}>-{fmt(savings)}</span>
+                </div>
+              </div>
+
+              <div
                 style={{
-                  color:
-                    getScoreLabel() === "Strong"
-                      ? "var(--glow-green)"
-                      : getScoreLabel() === "Moderate"
-                      ? "var(--warning)"
-                      : "var(--danger)",
+                  marginTop: "20px",
+                  paddingTop: "16px",
+                  borderTop: "1px solid rgba(255,255,255,0.1)",
                 }}
               >
-                {getScoreLabel()}
-              </p>
+                <div className="label" style={{ color: "rgba(255,255,255,0.45)", marginBottom: "6px" }}>
+                  Available Balance
+                </div>
+                <div
+                  className="big-number"
+                  style={{ color: "#E07A5F", fontSize: "36px" }}
+                >
+                  {fmt(available)}
+                </div>
+              </div>
+
+              <button
+                style={{
+                  width: "100%",
+                  marginTop: "20px",
+                  background: "white",
+                  color: "#1A0A00",
+                  borderRadius: "10px",
+                  padding: "12px",
+                }}
+              >
+                Save profile →
+              </button>
             </div>
 
-            {/* 🧠 INSIGHT */}
-            <div className="card">
-              <div className="label">System Insight</div>
-
-              {available > 15000 ? (
-                <p>
-                  You are in a strong liquidity position. This allows you to explore
-                  asset-building strategies such as property or investing.
-                </p>
-              ) : (
-                <p>
-                  Your liquidity is constrained. Focus on reducing fixed costs or
-                  improving your savings rate before major financial commitments.
-                </p>
-              )}
-
-              <hr />
-
-              <p className="muted">
-                Your available balance is the most critical metric in early financial life.
-              </p>
-            </div>
+            {isLow && (
+              <div className="alert alert-warning">
+                Your financial flexibility is limited. Consider reducing expenses or increasing savings rate.
+              </div>
+            )}
 
           </div>
         </div>

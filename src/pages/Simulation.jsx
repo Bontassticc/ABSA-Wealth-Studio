@@ -1,6 +1,9 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext } from "react";
 import Navbar from "../components/Navbar";
 import { UserContext } from "../context/UserContext";
+
+const fmt = (n) =>
+  "R" + Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
 
 export default function Simulation() {
   const { income, expenses, savings, available } = useContext(UserContext);
@@ -8,29 +11,19 @@ export default function Simulation() {
   const [rent, setRent] = useState(8000);
   const [property, setProperty] = useState(1200000);
 
-  // 🌙 DARK MODE
-  useEffect(() => {
-    document.body.classList.add("dark");
-    return () => document.body.classList.remove("dark");
-  }, []);
-
-  // 🧠 Calculations
   const estimatedBond = (property * 0.1) / 12;
-
   const rentAfter = available - rent;
-  const buyAfter = available - estimatedBond;
-
+  const buyAfter  = available - estimatedBond;
   const decisionGap = estimatedBond - rent;
 
-  // 🧠 Risk level system (NEW)
-  const getRiskLevel = (value) => {
-    if (value > 15000) return { label: "Comfortable", color: "var(--glow-green)" };
-    if (value > 8000) return { label: "Tight", color: "var(--warning)" };
-    return { label: "High Risk", color: "var(--danger)" };
+  const getRiskLabel = (value) => {
+    if (value > 15000) return { label: "Comfortable", color: "#4CAF50" };
+    if (value > 5000)  return { label: "Tight",       color: "#F5A623" };
+    return                    { label: "High Risk",   color: "#C8553D" };
   };
 
-  const rentRisk = getRiskLevel(rentAfter);
-  const buyRisk = getRiskLevel(buyAfter);
+  const rentRisk = getRiskLabel(rentAfter);
+  const buyRisk  = getRiskLabel(buyAfter);
 
   return (
     <div>
@@ -38,156 +31,143 @@ export default function Simulation() {
 
       <div className="page">
 
-        {/* HEADER */}
         <div className="section">
-          <h1>Rent vs Buy Simulation</h1>
-          <p className="muted">
-            Understand how each decision affects your financial flexibility
-          </p>
+          <p className="label">Simulation Lab</p>
+          <h1>
+            <span style={{ fontWeight: 400 }}>Rent</span>
+            {" vs "}
+            <span>Buy</span>
+          </h1>
+          <p className="muted">Feel the decision before you commit.</p>
         </div>
 
-        <div className="simulation-grid">
+        <div className="four-col section">
+          <div className="card" style={{ padding: "16px" }}>
+            <div className="label">Income</div>
+            <p style={{ fontWeight: 700, fontSize: "18px", marginTop: "4px" }}>{fmt(income)}</p>
+          </div>
+          <div className="card" style={{ padding: "16px" }}>
+            <div className="label">Expenses</div>
+            <p style={{ fontWeight: 700, fontSize: "18px", marginTop: "4px" }}>{fmt(expenses)}</p>
+          </div>
+          <div className="card" style={{ padding: "16px" }}>
+            <div className="label">Savings</div>
+            <p style={{ fontWeight: 700, fontSize: "18px", marginTop: "4px" }}>{fmt(savings)}</p>
+          </div>
+          <div
+            className="card"
+            style={{ padding: "16px", borderColor: "#E07A5F30", background: "#FFF6F3" }}
+          >
+            <div className="label">Available</div>
+            <p style={{ fontWeight: 700, fontSize: "18px", color: "var(--accent)", marginTop: "4px" }}>
+              {fmt(available)}
+            </p>
+          </div>
+        </div>
 
-          {/* LEFT: CONTROL PANEL */}
+        <div className="simulation-grid section">
           <div className="card">
-            <div className="label">Simulation Inputs</div>
-
-            <p className="muted">Your current position</p>
-            <p>Available: <strong>R{available}</strong></p>
-
-            <hr />
-
-            <div className="input-group">
-              <label>Monthly Rent</label>
-              <div className="big-number" style={{ fontSize: "28px" }}>
-                R{rent}
-              </div>
-              <input
-                type="range"
-                min="5000"
-                max="15000"
-                value={rent}
-                onChange={(e) => setRent(Number(e.target.value))}
-              />
+            <div
+              style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}
+            >
+              <label style={{ fontWeight: 500 }}>Monthly rent</label>
+              <span style={{ fontWeight: 700, fontSize: "18px", color: "var(--accent)" }}>
+                {fmt(rent)}
+              </span>
             </div>
-
-            <div className="input-group">
-              <label>Property Price</label>
-              <div className="big-number" style={{ fontSize: "28px" }}>
-                R{property}
-              </div>
-              <input
-                type="range"
-                min="500000"
-                max="2000000"
-                value={property}
-                onChange={(e) => setProperty(Number(e.target.value))}
-              />
-            </div>
-
-            <p className="muted" style={{ marginTop: "12px" }}>
-              Adjust values to simulate different financial scenarios in real time.
-            </p>
+            <input
+              type="range"
+              min="5000"
+              max="15000"
+              step="500"
+              value={rent}
+              onChange={(e) => setRent(Number(e.target.value))}
+            />
           </div>
 
-          {/* RIGHT: RESULTS */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-
-            {/* RENT CARD */}
-            <div className="card">
-              <div className="label">Rent Scenario</div>
-
-              <div className="big-number">R{rentAfter}</div>
-
-              <p style={{ color: rentRisk.color }}>
-                {rentRisk.label}
-              </p>
-
-              <p className="muted">Remaining after rent</p>
+          <div className="card">
+            <div
+              style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline" }}
+            >
+              <label style={{ fontWeight: 500 }}>Property price</label>
+              <span style={{ fontWeight: 700, fontSize: "18px", color: "var(--accent)" }}>
+                {fmt(property)}
+              </span>
             </div>
-
-            {/* BUY CARD */}
-            <div className="card">
-              <div className="label">Buy Scenario</div>
-
-              <div className="big-number">
-                R{buyAfter.toFixed(0)}
-              </div>
-
-              <p style={{ color: buyRisk.color }}>
-                {buyRisk.label}
-              </p>
-
-              <p className="muted">Remaining after bond</p>
-            </div>
-
-            {/* 🔥 DECISION BAR (NEW VISUAL) */}
-            <div className="card">
-              <div className="label">Decision Impact</div>
-
-              <div className="decision-bar">
-                <div
-                  className="decision-fill"
-                  style={{
-                    width: `${Math.min(
-                      (Math.abs(decisionGap) / 10000) * 100,
-                      100
-                    )}%`,
-                    background:
-                      decisionGap > 0
-                        ? "var(--danger)"
-                        : "var(--glow-green)",
-                  }}
-                />
-              </div>
-
-              <h3
-                style={{
-                  color:
-                    decisionGap > 0 ? "var(--danger)" : "var(--glow-green)",
-                }}
-              >
-                R{Math.abs(decisionGap).toFixed(0)}
-              </h3>
-
-              <p className="muted">
-                {decisionGap > 0
-                  ? "Buying increases monthly cost"
-                  : "Buying is financially close to renting"}
-              </p>
-            </div>
-
+            <input
+              type="range"
+              min="500000"
+              max="2000000"
+              step="50000"
+              value={property}
+              onChange={(e) => setProperty(Number(e.target.value))}
+            />
           </div>
         </div>
 
-        {/* INSIGHT */}
-        <div className="card section">
-          <div className="label">Decision Insight</div>
+        <div className="simulation-grid section">
+          <div className="card">
+            <div className="label">Rent, after expenses</div>
+            <div
+              className="big-number"
+              style={{
+                color: rentAfter < 0 ? "#C8553D" : "var(--text)",
+                margin: "8px 0 4px",
+              }}
+            >
+              {rentAfter < 0 ? "-" : ""}{fmt(Math.abs(rentAfter))}
+            </div>
+            <p className="muted">
+              {rentAfter < 0 ? "Monthly deficit." : "Small monthly deficit, recoverable."}
+            </p>
+          </div>
 
-          {decisionGap > 2000 ? (
-            <p>
-              Buying significantly increases financial pressure. This reduces
-              your flexibility and increases risk in early career stages.
-            </p>
-          ) : (
-            <p>
-              Buying is financially comparable to renting. This may be a viable
-              long-term wealth-building path.
-            </p>
-          )}
+          <div className="card">
+            <div className="label">Buy (bond), after expenses</div>
+            <div
+              className="big-number"
+              style={{
+                color: buyAfter < 0 ? "#C8553D" : "var(--text)",
+                margin: "8px 0 4px",
+              }}
+            >
+              {buyAfter < 0 ? "-" : ""}{fmt(Math.abs(buyAfter))}
+            </div>
+            <p className="muted">Deeper pressure, long-term upside.</p>
+          </div>
         </div>
 
-        {/* EDUCATION */}
-        <div className="card">
-          <div className="label">System Insight</div>
-
-          <p>
-            Property decisions are not just about affordability — they affect
-            liquidity, emergency resilience, and career mobility.
+        <div className="card card-feature section" style={{ position: "relative", overflow: "hidden" }}>
+          <div
+            style={{
+              position: "absolute",
+              width: 200,
+              height: 200,
+              borderRadius: "50%",
+              background: "rgba(255,255,255,0.08)",
+              top: -60,
+              right: -40,
+              pointerEvents: "none",
+            }}
+          />
+          <p className="label" style={{ color: "rgba(255,255,255,0.65)" }}>Insight</p>
+          <p style={{ fontSize: "18px", fontWeight: 500, marginTop: "6px", lineHeight: 1.5 }}>
+            {Math.abs(decisionGap) < 2000
+              ? "Buying is financially close to renting in your current situation. This could be a viable long-term wealth-building path."
+              : decisionGap > 0
+              ? "Buying would significantly increase your monthly costs. Consider improving your available balance first."
+              : "Renting gives you more flexibility right now. You can revisit buying as your income grows."}
           </p>
+        </div>
 
-          <p className="muted">
-            In early financial life, flexibility is often more valuable than ownership.
+        <div className="card">
+          <div className="label">What This Means</div>
+          <p style={{ marginTop: "8px", lineHeight: 1.6 }}>
+            Property decisions are not just about affordability — they affect liquidity,
+            emergency resilience, and career mobility.{" "}
+            <span className="muted">
+              In early financial life, flexibility is often more valuable than ownership.
+            </span>
           </p>
         </div>
 
