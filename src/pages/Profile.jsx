@@ -16,6 +16,8 @@ export default function Profile() {
     navigate("/dashboard");
   };
 
+  
+
   return (
     <div>
       <Navbar />

@@ -14,6 +14,7 @@ import Simulation from "./pages/Simulation";
 function App() {
   const [loading, setLoading] = useState(true);
 
+ 
   if (loading) {
     return <SplashScreen onFinish={() => setLoading(false)} />;
   }

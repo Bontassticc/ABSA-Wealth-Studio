@@ -1,68 +1,91 @@
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import { useState, useContext, useEffect } from "react";
 
 export default function Landing() {
+
+useEffect(() => {
+  document.body.classList.add("dark");
+  return () => document.body.classList.remove("dark");
+}, []);
+  
   return (
-    <div>
-      <Navbar />
 
-      <div className="page">
+    
+   <div>
+  <Navbar />
 
-        {/* 🧠 HERO */}
-        <div className="card">
-          <h1>ABSA Wealth Studio</h1>
-          <p>
-            A financial decision system designed for your first five years of work.
-          </p>
+  
 
-          <h2 style={{ marginTop: "20px" }}>
-            Not budgeting. Decision intelligence.
-          </h2>
+  <div className="page">
 
+    {/* 🔥 HERO */}
+    <div className="hero section">
+      <div>
+        <p className="label">Financial Decision System • First 5 Years</p>
+
+        <h1 className="hero-title">
+          Not budgeting.
+          <br />
+          Decision intelligence.
+        </h1>
+
+        <p className="hero-sub">
+          Rent vs buy. Car vs invest. Spend vs save.
+          <br />
+          Understand the 5-year impact before you commit.
+        </p>
+
+        <div style={{ marginTop: "20px" }}>
           <Link to="/profile">
-            <button style={{ marginTop: "20px" }}>
-              Start Your Financial Profile
-            </button>
+            <button>Start Your Financial Profile →</button>
           </Link>
         </div>
-
-        {/* 🧠 PROBLEM SECTION */}
-        <div className="card">
-          <h3>The Problem</h3>
-          <p>
-            Most young professionals make high-impact financial decisions
-            without understanding long-term consequences.
-          </p>
-          <p>
-            Rent vs buy. Cars vs investing. Spending vs saving.
-          </p>
-        </div>
-
-        {/* 🧠 PRODUCT MODULES */}
-        <div className="card">
-          <h3>What This System Does</h3>
-
-          <ul>
-            <li>📊 Money Snapshot: understand your financial reality</li>
-            <li>🧠 Simulation Lab: test financial decisions safely</li>
-            <li>🧭 Strategy Tracks: guided 5-year financial paths</li>
-            <li>📈 Financial Intelligence Score: measure your stability</li>
-          </ul>
-        </div>
-
-        {/* 🧠 CTA */}
-        <div className="card">
-          <h3>Start Your Journey</h3>
-          <p>
-            Build your financial profile and explore your decision space.
-          </p>
-
-          <Link to="/snapshot">
-            <button>Begin with Snapshot</button>
-          </Link>
-        </div>
-
       </div>
     </div>
+
+    {/* 🧠 PROBLEM + SOLUTION */}
+    <div className="two-col section">
+
+      <div className="card">
+        <div className="label">The Problem</div>
+        <h2>
+          Most young professionals make high-impact financial decisions
+          without understanding long-term consequences.
+        </h2>
+
+        <p className="muted">
+          rent_vs_buy · cars_vs_investing · spending_vs_saving
+        </p>
+      </div>
+
+      <div className="card">
+        <div className="label">What This System Does</div>
+
+        <ul className="feature-list">
+          <li><strong>Money Snapshot</strong> — understand your financial reality</li>
+          <li><strong>Simulation Lab</strong> — test decisions safely</li>
+          <li><strong>Strategy Tracks</strong> — guided 5-year paths</li>
+          <li><strong>Intelligence Score</strong> — measure your stability</li>
+        </ul>
+      </div>
+
+    </div>
+
+    {/* 🚀 FINAL CTA */}
+    <div className="card section">
+      <div className="label">Start Your Journey</div>
+
+      <h2>Build your financial profile and explore your decision space.</h2>
+
+      <Link to="/snapshot">
+        <button style={{ marginTop: "16px" }}>
+          Begin with Snapshot
+        </button>
+      </Link>
+    </div>
+
+  </div>
+</div>
   );
 }
